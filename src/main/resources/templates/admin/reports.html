@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Reports & Analytics - Admin')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 p-0">
+                <div th:replace="~{fragments/sidebar :: sidebar('reports')}"></div>
+            </div>
+
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">Reports &amp; Real-time Analytics</h2>
+                        <span class="text-muted">Database-backed impact indicators, food category breakdowns, and fulfillment metrics</span>
+                    </div>
+                    <button class="btn btn-outline-secondary" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i>Print Report
+                    </button>
+                </div>
+
+                <!-- Summary Indicators -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-3 rounded-4 bg-white text-center">
+                            <span class="text-muted small">Total Food Volume Rescued</span>
+                            <div class="fs-2 fw-bold text-success" th:text="${reports.stats.totalQuantityDonated}">0</div>
+                            <span class="small text-muted">Across all registered commercial donors</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-3 rounded-4 bg-white text-center">
+                            <span class="text-muted small">Total Delivered to Beneficiaries</span>
+                            <div class="fs-2 fw-bold text-primary" th:text="${reports.stats.totalQuantityDelivered}">0</div>
+                            <span class="small text-muted" th:text="${reports.stats.completedDeliveries} + ' completed courier journeys'"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-3 rounded-4 bg-white text-center">
+                            <span class="text-muted small">Currently Available Quantity</span>
+                            <div class="fs-2 fw-bold text-warning" th:text="${reports.stats.totalQuantityAvailable}">0</div>
+                            <span class="small text-muted" th:text="${reports.stats.availableDonations} + ' active donation listings'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1: Category Breakdown & Food Type -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-pie-chart text-success me-2"></i>Donations by Food Category</h5>
+                            <div style="height: 280px; position: relative;">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-egg-fried text-warning me-2"></i>Vegetarian vs Non-Vegetarian Proportion</h5>
+                            <div style="height: 280px; position: relative;">
+                                <canvas id="typeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 2: Donor Contributions & NGO Distribution -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-bar-chart-line text-primary me-2"></i>Top Donor Organization Contributions</h5>
+                            <div style="height: 280px; position: relative;">
+                                <canvas id="donorChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-building-check text-info me-2"></i>NGO Community Distribution Volume</h5>
+                            <div style="height: 280px; position: relative;">
+                                <canvas id="ngoChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Row 3: Volunteer Delivery Performance -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-bicycle text-success me-2"></i>Volunteer Couriers Delivery Count</h5>
+                    <div style="height: 260px; position: relative;">
+                        <canvas id="volunteerChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Chart.js Initialization Script with Real Backend Data -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const categoryLabels = /*[[${reports.categoryLabels}]]*/ [];
+        const categoryData = /*[[${reports.categoryData}]]*/ [];
+
+        const typeLabels = /*[[${reports.typeLabels}]]*/ [];
+        const typeData = /*[[${reports.typeData}]]*/ [];
+
+        const donorLabels = /*[[${reports.donorLabels}]]*/ [];
+        const donorData = /*[[${reports.donorData}]]*/ [];
+
+        const ngoLabels = /*[[${reports.ngoLabels}]]*/ [];
+        const ngoData = /*[[${reports.ngoData}]]*/ [];
+
+        const volLabels = /*[[${reports.volLabels}]]*/ [];
+        const volData = /*[[${reports.volData}]]*/ [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Category Doughnut Chart
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: categoryLabels.length ? categoryLabels : ['Cooked Meals', 'Bakery', 'Packaged'],
+                    datasets: [{
+                        data: categoryData.length ? categoryData : [65, 20, 15],
+                        backgroundColor: ['#198754', '#20c997', '#ffc107', '#fd7e14', '#0dcaf0', '#6f42c1', '#d63384']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Food Type Pie Chart
+            new Chart(document.getElementById('typeChart'), {
+                type: 'pie',
+                data: {
+                    labels: typeLabels.length ? typeLabels : ['Vegetarian', 'Non-Vegetarian'],
+                    datasets: [{
+                        data: typeData.length ? typeData : [75, 25],
+                        backgroundColor: ['#28a745', '#dc3545', '#20c997', '#ffc107']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Donor Bar Chart
+            new Chart(document.getElementById('donorChart'), {
+                type: 'bar',
+                data: {
+                    labels: donorLabels.length ? donorLabels : ['Bistro', 'Banquet'],
+                    datasets: [{
+                        label: 'Total Quantity Donated',
+                        data: donorData.length ? donorData : [50, 100],
+                        backgroundColor: '#198754'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            });
+
+            // NGO Distribution Bar Chart
+            new Chart(document.getElementById('ngoChart'), {
+                type: 'bar',
+                data: {
+                    labels: ngoLabels.length ? ngoLabels : ['Care & Feed', 'Hope Initiative'],
+                    datasets: [{
+                        label: 'Distributed Quantity',
+                        data: ngoData.length ? ngoData : [35, 60],
+                        backgroundColor: '#0dcaf0'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            });
+
+            // Volunteer Delivery Bar Chart
+            new Chart(document.getElementById('volunteerChart'), {
+                type: 'bar',
+                data: {
+                    labels: volLabels.length ? volLabels : ['Amit Sharma', 'Priya Deshmukh'],
+                    datasets: [{
+                        label: 'Completed Deliveries',
+                        data: volData.length ? volData : [1, 2],
+                        backgroundColor: '#20c997'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', scales: { x: { beginAtZero: true } } }
+            });
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

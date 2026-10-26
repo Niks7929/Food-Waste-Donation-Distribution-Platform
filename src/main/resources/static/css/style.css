@@ -1,0 +1,231 @@
+/* Food Waste Donation & Distribution Platform - Custom Theme */
+:root {
+    --primary-green: #198754;
+    --primary-dark: #146c43;
+    --primary-light: #e8f5e9;
+    --accent-gold: #ffc107;
+    --text-dark: #212529;
+    --text-muted: #6c757d;
+    --bg-light: #f8f9fa;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-dark);
+    background-color: #fafbfc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--primary-green) !important;
+}
+
+.nav-link {
+    font-weight: 500;
+}
+
+.nav-link.active {
+    color: var(--primary-green) !important;
+    font-weight: 600;
+}
+
+/* Safety Notice Banner */
+.food-safety-banner {
+    background-color: #fff3cd;
+    border-bottom: 1px solid #ffe69c;
+    color: #664d03;
+    font-size: 0.88rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #198754 0%, #0f5132 100%);
+    color: white;
+    padding: 4.5rem 0;
+    border-radius: 0 0 1.5rem 1.5rem;
+}
+
+.hero-stats-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    color: white;
+}
+
+/* Feature Cards */
+.feature-card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: white;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--hover-shadow);
+}
+
+.icon-box {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.icon-box-primary {
+    background-color: var(--primary-light);
+    color: var(--primary-green);
+}
+
+/* Dashboard Layout */
+.dashboard-sidebar {
+    background: white;
+    border-right: 1px solid #e9ecef;
+    min-height: calc(100vh - 60px);
+}
+
+.sidebar-heading {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding: 1rem 1.25rem 0.5rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    color: #495057;
+    text-decoration: none;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.sidebar-link i {
+    margin-right: 0.75rem;
+    font-size: 1.15rem;
+}
+
+.sidebar-link:hover, .sidebar-link.active {
+    background-color: var(--primary-light);
+    color: var(--primary-green);
+    border-left-color: var(--primary-green);
+}
+
+/* Stat Cards */
+.stat-card {
+    border: none;
+    border-radius: 0.85rem;
+    box-shadow: var(--card-shadow);
+    background: white;
+    padding: 1.25rem;
+    height: 100%;
+}
+
+.stat-number {
+    font-size: 1.85rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Badges */
+.badge-status-AVAILABLE { background-color: #198754; color: white; }
+.badge-status-RESERVED { background-color: #0dcaf0; color: #000; }
+.badge-status-PARTIALLY_RESERVED { background-color: #fd7e14; color: white; }
+.badge-status-COLLECTED { background-color: #6f42c1; color: white; }
+.badge-status-DELIVERED { background-color: #198754; color: white; }
+.badge-status-COMPLETED { background-color: #198754; color: white; }
+.badge-status-EXPIRED { background-color: #dc3545; color: white; }
+.badge-status-CANCELLED { background-color: #6c757d; color: white; }
+.badge-status-PENDING { background-color: #ffc107; color: #000; }
+.badge-status-APPROVED { background-color: #198754; color: white; }
+.badge-status-REJECTED { background-color: #dc3545; color: white; }
+.badge-status-SUSPENDED { background-color: #343a40; color: white; }
+.badge-status-ASSIGNED { background-color: #0d6efd; color: white; }
+.badge-status-PICKED_UP { background-color: #6610f2; color: white; }
+.badge-status-IN_TRANSIT { background-color: #d63384; color: white; }
+
+/* Custom Food Cards */
+.food-card {
+    border: none;
+    border-radius: 0.85rem;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: white;
+}
+
+.food-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--hover-shadow);
+}
+
+.food-card-img {
+    height: 180px;
+    object-fit: cover;
+    background: #e9ecef;
+}
+
+.food-type-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.tag-veg {
+    background-color: #28a745;
+    color: white;
+}
+
+.tag-nonveg {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Footer */
+footer {
+    background-color: #1b2024;
+    color: #adb5bd;
+    margin-top: auto;
+}
+
+footer a {
+    color: #ced4da;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: white;
+    text-decoration: underline;
+}

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head('Transform Surplus Food into Smiles')}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section text-center text-lg-start">
+            <div class="container py-4">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-7">
+                        <div class="badge bg-light text-success fw-bold px-3 py-2 rounded-pill mb-3">
+                            <i class="bi bi-recycle me-1"></i> Bridging Abundance &amp; Need
+                        </div>
+                        <h1 class="display-4 fw-bold mb-3 text-white">
+                            Turn Surplus Food into Sustenance, Not Waste.
+                        </h1>
+                        <p class="lead text-light mb-4">
+                            Connect restaurants, hotels, marriage halls, hostels, and caterers directly with verified NGOs and volunteer couriers. Real-time food rescue with full traceability, quantity management, and pickup scheduling.
+                        </p>
+                        <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+                            <a th:href="@{/register}" class="btn btn-warning btn-lg px-4 fw-bold shadow-sm">
+                                <i class="bi bi-heart-fill me-2 text-danger"></i>Donate Food Today
+                            </a>
+                            <a th:href="@{/register}" class="btn btn-outline-light btn-lg px-4">
+                                <i class="bi bi-building me-2"></i>Register as NGO / Volunteer
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="hero-stats-card shadow-lg">
+                            <h5 class="fw-bold mb-4 text-warning border-bottom border-secondary pb-2">
+                                <i class="bi bi-bar-chart-fill me-2"></i>Live Platform Impact
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="p-3 bg-white bg-opacity-10 rounded text-center">
+                                        <div class="fs-2 fw-bold text-white" th:text="${stats.totalDonations}">0</div>
+                                        <div class="small text-light">Total Food Listings</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-white bg-opacity-10 rounded text-center">
+                                        <div class="fs-2 fw-bold text-warning" th:text="${stats.totalQuantityDonated}">0</div>
+                                        <div class="small text-light">Quantity Rescued</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-white bg-opacity-10 rounded text-center">
+                                        <div class="fs-2 fw-bold text-info" th:text="${stats.completedDeliveries}">0</div>
+                                        <div class="small text-light">Deliveries Completed</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-white bg-opacity-10 rounded text-center">
+                                        <div class="fs-2 fw-bold text-success" th:text="${stats.totalNgos + stats.totalDonors}">0</div>
+                                        <div class="small text-light">Partner Organizations</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-3 border-top border-secondary text-center small text-light">
+                                <i class="bi bi-clock-history me-1"></i> Expired food automatically purged by scheduled daemon
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Flash alerts if any -->
+        <div class="container mt-4">
+            <div th:replace="~{fragments/alerts :: alerts}"></div>
+        </div>
+
+        <!-- 3 Simple Steps -->
+        <section class="py-5">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <span class="text-success fw-bold text-uppercase small">Simple, Transparent &amp; Fast</span>
+                    <h2 class="fw-bold mt-1">How The Distribution Flow Works</h2>
+                    <p class="text-muted">A synchronized workflow designed to move perishable food safely within hours.</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card feature-card p-4 h-100 text-center">
+                            <div class="icon-box icon-box-primary mx-auto mb-3">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                            <h5 class="fw-bold">1. Donor Lists Food</h5>
+                            <p class="text-muted small">
+                                Restaurants, caterers, or banquets specify quantity, preparation time, allergen notes, and pickup deadlines.
+                            </p>
+                            <span class="badge bg-light text-success align-self-center mt-auto">Available Status</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card feature-card p-4 h-100 text-center">
+                            <div class="icon-box icon-box-primary mx-auto mb-3">
+                                <i class="bi bi-hand-index-thumb"></i>
+                            </div>
+                            <h5 class="fw-bold">2. NGO Requests &amp; Reserves</h5>
+                            <p class="text-muted small">
+                                Verified NGOs search by category and location, reserving exact quantities with atomic row locking to prevent overbooking.
+                            </p>
+                            <span class="badge bg-light text-warning align-self-center mt-auto">Reserved Status</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card feature-card p-4 h-100 text-center">
+                            <div class="icon-box icon-box-primary mx-auto mb-3">
+                                <i class="bi bi-truck"></i>
+                            </div>
+                            <h5 class="fw-bold">3. Volunteer Couriers Deliver</h5>
+                            <p class="text-muted small">
+                                Assigned volunteers collect the food, mark transit progress, and record final handoff to community kitchens.
+                            </p>
+                            <span class="badge bg-light text-primary align-self-center mt-auto">Delivered Status</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Role Showcase Section -->
+        <section class="py-5 bg-white border-top border-bottom">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold">Designed for Every Stakeholder</h2>
+                    <p class="text-muted">Empowering restaurants, shelter kitchens, and compassionate citizens.</p>
+                </div>
+
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-4">
+                        <div class="p-4 rounded-4 border bg-light h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-box icon-box-primary me-3"><i class="bi bi-shop"></i></div>
+                                <div>
+                                    <h5 class="fw-bold mb-0">For Donors</h5>
+                                    <small class="text-muted">Restaurants, Caterers, Hotels</small>
+                                </div>
+                            </div>
+                            <ul class="list-unstyled small mb-4">
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Prevent good meals from entering landfills</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Specify dietary categories &amp; allergen labels</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Review incoming requests from verified NGOs</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Track handoff and delivery status in real-time</li>
+                            </ul>
+                            <a th:href="@{/register}" class="btn btn-outline-success w-100 fw-semibold">Register as Donor</a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="p-4 rounded-4 border bg-light h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-box icon-box-primary me-3"><i class="bi bi-heart-pulse"></i></div>
+                                <div>
+                                    <h5 class="fw-bold mb-0">For NGOs</h5>
+                                    <small class="text-muted">Shelters, Community Kitchens</small>
+                                </div>
+                            </div>
+                            <ul class="list-unstyled small mb-4">
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Explore verified surplus food near your shelters</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Request partial or full batches accurately</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Receive assigned courier delivery updates</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Maintain digital food distribution audit receipts</li>
+                            </ul>
+                            <a th:href="@{/register}" class="btn btn-success w-100 fw-semibold">Register as NGO</a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="p-4 rounded-4 border bg-light h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-box icon-box-primary me-3"><i class="bi bi-person-walking"></i></div>
+                                <div>
+                                    <h5 class="fw-bold mb-0">For Volunteers</h5>
+                                    <small class="text-muted">Active Community Couriers</small>
+                                </div>
+                            </div>
+                            <ul class="list-unstyled small mb-4">
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Claim unassigned delivery tasks in your zone</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Direct contact coordinates for donor and NGO</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Step-by-step progress updating (Picked up &rarr; Delivered)</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Recognized delivery log of community service</li>
+                            </ul>
+                            <a th:href="@{/register}" class="btn btn-outline-success w-100 fw-semibold">Join as Volunteer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Banner -->
+        <section class="py-5 bg-success text-white text-center">
+            <div class="container py-3">
+                <h2 class="display-6 fw-bold mb-3">Together, Let's Make Zero Food Waste a Reality.</h2>
+                <p class="lead mb-4 text-light">Every meal saved is a step toward hunger alleviation and environmental preservation.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a th:href="@{/register}" class="btn btn-warning btn-lg px-5 fw-bold">Get Started Now</a>
+                    <a th:href="@{/contact}" class="btn btn-outline-light btn-lg px-4">Contact Our Team</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

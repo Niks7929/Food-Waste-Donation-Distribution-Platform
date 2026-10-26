@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="alerts">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
+        <i class="bi bi-check-circle-fill fs-5 me-2"></i>
+        <div th:text="${successMessage}">Operation completed successfully.</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+        <div th:text="${errorMessage}">An error occurred.</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${infoMessage}" class="alert alert-info alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
+        <i class="bi bi-info-circle-fill fs-5 me-2"></i>
+        <div th:text="${infoMessage}">Information notice.</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
+        <i class="bi bi-x-octagon-fill fs-5 me-2"></i>
+        <div>Invalid email or password. Please try again.</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
+        <i class="bi bi-box-arrow-right fs-5 me-2"></i>
+        <div>You have been safely logged out.</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+</body>
+</html>

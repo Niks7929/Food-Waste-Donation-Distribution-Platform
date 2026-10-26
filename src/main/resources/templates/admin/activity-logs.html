@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Activity Logs - Admin')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 p-0">
+                <div th:replace="~{fragments/sidebar :: sidebar('logs')}"></div>
+            </div>
+
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">System Audit &amp; Activity Logs</h2>
+                        <span class="text-muted">Immutable record of logins, status transitions, approvals, and courier milestones</span>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Action</th>
+                                        <th>Actor</th>
+                                        <th>Entity</th>
+                                        <th>Event Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="log : ${logsPage.content}">
+                                        <td class="small text-muted" th:text="${#temporals.format(log.createdAt, 'yyyy-MM-dd HH:mm:ss')}">Time</td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border fw-bold" th:text="${log.action}">ACTION</span>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold" th:text="${log.user != null ? log.user.fullName : 'System Daemon'}">Actor</div>
+                                            <small class="text-muted" th:text="${log.user != null ? log.user.email : 'Automated Task'}">email</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary" th:text="${log.entityType} + (${log.entityId != null ? ' #' + log.entityId : ''})">Entity</span>
+                                        </td>
+                                        <td class="small" th:text="${log.details}">Details</td>
+                                    </tr>
+                                    <tr th:if="${logsPage.empty}">
+                                        <td colspan="5" class="text-center py-5 text-muted">No activity logs recorded yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3" th:if="${logsPage.totalPages > 1}">
+                        <span class="small text-muted" th:text="'Page ' + (${logsPage.number} + 1) + ' of ' + ${logsPage.totalPages}"></span>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item" th:classappend="${logsPage.first ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/activity-logs(page=${logsPage.number - 1})}">Previous</a>
+                            </li>
+                            <li class="page-item" th:classappend="${logsPage.last ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/admin/activity-logs(page=${logsPage.number + 1})}">Next</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

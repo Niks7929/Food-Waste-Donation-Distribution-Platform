@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Available Food Donations - NGO')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 p-0">
+                <div th:replace="~{fragments/sidebar :: sidebar('available')}"></div>
+            </div>
+
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">Available Surplus Food Donations</h2>
+                        <span class="text-muted">Browse, filter, and request verified food batches ready for collection</span>
+                    </div>
+                </div>
+
+                <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+                <!-- Filter Bar Card -->
+                <div class="card border-0 shadow-sm rounded-4 bg-white p-3 mb-4">
+                    <form th:action="@{/ngo/donations}" method="get" class="row g-2 align-items-center">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                                <input type="text" name="search" class="form-control border-start-0" placeholder="Search food title..." th:value="${filter.search}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <select name="category" class="form-select">
+                                <option value="">All Categories</option>
+                                <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.displayName}" th:selected="${filter.category == cat}"></option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <select name="foodType" class="form-select">
+                                <option value="">All Dietary Types</option>
+                                <option th:each="ft : ${foodTypes}" th:value="${ft}" th:text="${ft.displayName}" th:selected="${filter.foodType == ft}"></option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <input type="text" name="city" class="form-control" placeholder="Filter by City..." th:value="${filter.city}">
+                        </div>
+
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-success fw-bold w-100">
+                                <i class="bi bi-funnel me-1"></i>Filter
+                            </button>
+                            <a th:href="@{/ngo/donations}" class="btn btn-outline-secondary">Reset</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Food Cards Grid -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 col-lg-4" th:each="d : ${donationPage.content}">
+                        <div class="card food-card h-100 position-relative">
+                            <!-- Veg/Non-veg tag badge -->
+                            <span class="food-type-tag" th:classappend="${d.foodType.name() == 'VEGETARIAN' ? 'tag-veg' : 'tag-nonveg'}"
+                                  th:text="${d.foodType.displayName}">Type</span>
+
+                            <img th:if="${d.imagePath != null}" th:src="@{'/uploads/' + ${d.imagePath}}" class="card-img-top food-card-img" alt="Food Photo">
+                            <div th:if="${d.imagePath == null}" class="card-img-top food-card-img d-flex align-items-center justify-content-center text-muted">
+                                <i class="bi bi-basket fs-1"></i>
+                            </div>
+
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge bg-light text-dark border" th:text="${d.category.displayName}">Category</span>
+                                    <span class="badge bg-success" th:text="${d.status}">AVAILABLE</span>
+                                </div>
+
+                                <h5 class="fw-bold card-title mt-2 mb-1" th:text="${d.foodName}">Food Title</h5>
+                                <small class="text-muted d-block mb-2">
+                                    <i class="bi bi-shop me-1 text-success"></i><span th:text="${d.donorOrganization.organizationName}">Donor Org</span>
+                                </small>
+
+                                <p class="card-text small text-secondary flex-grow-1" th:text="${d.description != null && !d.description.isEmpty() ? d.description : 'Surplus food batch prepared under hygienic conditions.'}"></p>
+
+                                <div class="bg-light p-2 rounded-3 small mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted">Available Quantity:</span>
+                                        <strong class="text-success fs-6" th:text="${d.availableQuantity} + ' ' + ${d.quantityUnit.displayName}">50 Meals</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Pickup Deadline:</span>
+                                        <strong class="text-danger" th:text="${#temporals.format(d.pickupDeadline, 'dd MMM HH:mm')}">Deadline</strong>
+                                    </div>
+                                </div>
+
+                                <div class="small text-muted mb-3">
+                                    <i class="bi bi-geo-alt me-1 text-danger"></i><span th:text="${d.pickupAddress}">Pickup Address</span>
+                                </div>
+
+                                <a th:href="@{'/ngo/donations/' + ${d.id}}" class="btn btn-success fw-bold w-100 mt-auto">
+                                    <i class="bi bi-hand-index-thumb me-1"></i>View &amp; Request Food
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-center py-5" th:if="${donationPage.empty}">
+                        <div class="card border-0 shadow-sm p-5 rounded-4 mx-auto" style="max-width: 500px;">
+                            <i class="bi bi-inbox text-muted display-4 mb-3"></i>
+                            <h4 class="fw-bold">No Available Donations Found</h4>
+                            <p class="text-muted small">Try relaxing your search keywords or category filters, or check back shortly.</p>
+                            <a th:href="@{/ngo/donations}" class="btn btn-sm btn-outline-success mx-auto">Reset Filters</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center" th:if="${donationPage.totalPages > 1}">
+                    <span class="small text-muted" th:text="'Page ' + (${donationPage.number} + 1) + ' of ' + ${donationPage.totalPages}"></span>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item" th:classappend="${donationPage.first ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/ngo/donations(page=${donationPage.number - 1}, search=${filter.search}, category=${filter.category}, foodType=${filter.foodType}, city=${filter.city})}">Previous</a>
+                        </li>
+                        <li class="page-item" th:classappend="${donationPage.last ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/ngo/donations(page=${donationPage.number + 1}, search=${filter.search}, category=${filter.category}, foodType=${filter.foodType}, city=${filter.city})}">Next</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

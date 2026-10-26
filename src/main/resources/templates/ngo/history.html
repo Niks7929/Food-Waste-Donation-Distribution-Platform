@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Distribution History & Receipts - NGO')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 p-0">
+                <div th:replace="~{fragments/sidebar :: sidebar('history')}"></div>
+            </div>
+
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">Food Distribution Receipts &amp; History</h2>
+                        <span class="text-muted">Digital audit logs of all received and distributed food donations</span>
+                    </div>
+                    <button class="btn btn-outline-secondary" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i>Print Audit Summary
+                    </button>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date Received</th>
+                                        <th>Food Description</th>
+                                        <th>Source Donor</th>
+                                        <th>Quantity Received</th>
+                                        <th>Delivered By</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="r : ${requestPage.content}" th:if="${r.status.name() == 'COMPLETED'}">
+                                        <td class="small" th:text="${#temporals.format(r.updatedAt, 'dd MMM yyyy HH:mm')}">Date</td>
+                                        <td>
+                                            <div class="fw-bold" th:text="${r.donation.foodName}">Food</div>
+                                            <span class="badge bg-light text-dark border" th:text="${r.donation.category.displayName}">Category</span>
+                                        </td>
+                                        <td th:text="${r.donation.donorOrganization.organizationName}">Donor Org</td>
+                                        <td>
+                                            <strong class="text-success" th:text="${r.requestedQuantity} + ' ' + ${r.quantityUnit.displayName}">Qty</strong>
+                                        </td>
+                                        <td>
+                                            <span th:text="${r.delivery != null && r.delivery.volunteer != null ? r.delivery.volunteer.fullName : 'Direct Pickup'}">Courier</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success"><i class="bi bi-check2-circle me-1"></i>Received &amp; Distributed</span>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${requestPage.empty}">
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            No completed distribution receipts on record yet.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

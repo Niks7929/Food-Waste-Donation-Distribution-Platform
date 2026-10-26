@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:fragment="sidebar(activeMenu)" class="dashboard-sidebar py-3">
+    <!-- Admin Sidebar -->
+    <div sec:authorize="hasRole('ADMIN')">
+        <div class="sidebar-heading">Administration</div>
+        <a th:href="@{/admin/dashboard}" class="sidebar-link" th:classappend="${activeMenu == 'dashboard' ? 'active' : ''}">
+            <i class="bi bi-speedometer2"></i>Dashboard
+        </a>
+        <a th:href="@{/admin/organizations}" class="sidebar-link" th:classappend="${activeMenu == 'organizations' ? 'active' : ''}">
+            <i class="bi bi-building-check"></i>Organizations
+        </a>
+        <a th:href="@{/admin/users}" class="sidebar-link" th:classappend="${activeMenu == 'users' ? 'active' : ''}">
+            <i class="bi bi-people"></i>User Accounts
+        </a>
+        <a th:href="@{/admin/donations}" class="sidebar-link" th:classappend="${activeMenu == 'donations' ? 'active' : ''}">
+            <i class="bi bi-basket"></i>All Donations
+        </a>
+        <a th:href="@{/admin/deliveries}" class="sidebar-link" th:classappend="${activeMenu == 'deliveries' ? 'active' : ''}">
+            <i class="bi bi-truck"></i>Deliveries &amp; Tasks
+        </a>
+        <a th:href="@{/admin/inquiries}" class="sidebar-link" th:classappend="${activeMenu == 'inquiries' ? 'active' : ''}">
+            <i class="bi bi-chat-left-text"></i>Public Inquiries
+        </a>
+        <div class="sidebar-heading">Analytics &amp; Audit</div>
+        <a th:href="@{/admin/reports}" class="sidebar-link" th:classappend="${activeMenu == 'reports' ? 'active' : ''}">
+            <i class="bi bi-graph-up"></i>Reports &amp; Analytics
+        </a>
+        <a th:href="@{/admin/activity-logs}" class="sidebar-link" th:classappend="${activeMenu == 'logs' ? 'active' : ''}">
+            <i class="bi bi-clock-history"></i>Activity Logs
+        </a>
+    </div>
+
+    <!-- Donor Sidebar -->
+    <div sec:authorize="hasRole('DONOR')">
+        <div class="sidebar-heading">Donor Portal</div>
+        <a th:href="@{/donor/dashboard}" class="sidebar-link" th:classappend="${activeMenu == 'dashboard' ? 'active' : ''}">
+            <i class="bi bi-speedometer2"></i>Dashboard
+        </a>
+        <a th:href="@{/donor/donations/create}" class="sidebar-link text-success fw-bold" th:classappend="${activeMenu == 'create-donation' ? 'active' : ''}">
+            <i class="bi bi-plus-circle-fill"></i>Donate Food
+        </a>
+        <a th:href="@{/donor/donations}" class="sidebar-link" th:classappend="${activeMenu == 'donations' ? 'active' : ''}">
+            <i class="bi bi-collection"></i>My Donations
+        </a>
+        <a th:href="@{/donor/requests}" class="sidebar-link" th:classappend="${activeMenu == 'requests' ? 'active' : ''}">
+            <i class="bi bi-inbox"></i>Incoming Requests
+        </a>
+        <div class="sidebar-heading">Settings</div>
+        <a th:href="@{/donor/profile}" class="sidebar-link" th:classappend="${activeMenu == 'profile' ? 'active' : ''}">
+            <i class="bi bi-building"></i>Organization Profile
+        </a>
+    </div>
+
+    <!-- NGO Sidebar -->
+    <div sec:authorize="hasRole('NGO')">
+        <div class="sidebar-heading">NGO Portal</div>
+        <a th:href="@{/ngo/dashboard}" class="sidebar-link" th:classappend="${activeMenu == 'dashboard' ? 'active' : ''}">
+            <i class="bi bi-speedometer2"></i>Dashboard
+        </a>
+        <a th:href="@{/ngo/donations}" class="sidebar-link text-success fw-bold" th:classappend="${activeMenu == 'available' ? 'active' : ''}">
+            <i class="bi bi-search"></i>Find Available Food
+        </a>
+        <a th:href="@{/ngo/requests}" class="sidebar-link" th:classappend="${activeMenu == 'requests' ? 'active' : ''}">
+            <i class="bi bi-send"></i>My Pickup Requests
+        </a>
+        <a th:href="@{/ngo/history}" class="sidebar-link" th:classappend="${activeMenu == 'history' ? 'active' : ''}">
+            <i class="bi bi-journal-check"></i>Distribution Receipts
+        </a>
+        <div class="sidebar-heading">Settings</div>
+        <a th:href="@{/ngo/profile}" class="sidebar-link" th:classappend="${activeMenu == 'profile' ? 'active' : ''}">
+            <i class="bi bi-building"></i>Organization Profile
+        </a>
+    </div>
+
+    <!-- Volunteer Sidebar -->
+    <div sec:authorize="hasRole('VOLUNTEER')">
+        <div class="sidebar-heading">Volunteer Portal</div>
+        <a th:href="@{/volunteer/dashboard}" class="sidebar-link" th:classappend="${activeMenu == 'dashboard' ? 'active' : ''}">
+            <i class="bi bi-speedometer2"></i>Dashboard
+        </a>
+        <a th:href="@{/volunteer/tasks}" class="sidebar-link" th:classappend="${activeMenu == 'tasks' ? 'active' : ''}">
+            <i class="bi bi-list-task"></i>My Delivery Tasks
+        </a>
+        <a th:href="@{/volunteer/available}" class="sidebar-link text-info fw-bold" th:classappend="${activeMenu == 'available' ? 'active' : ''}">
+            <i class="bi bi-plus-square"></i>Claim Available Deliveries
+        </a>
+        <a th:href="@{/volunteer/history}" class="sidebar-link" th:classappend="${activeMenu == 'history' ? 'active' : ''}">
+            <i class="bi bi-check2-all"></i>Completed History
+        </a>
+    </div>
+</div>
+</body>
+</html>

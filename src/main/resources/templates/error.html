@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('System Notice - Food Waste Platform')}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="py-5 text-center">
+        <div class="container py-5">
+            <div class="card border-0 shadow-sm mx-auto p-5 rounded-4" style="max-width: 600px;">
+                <div class="text-danger mb-3">
+                    <i class="bi bi-exclamation-triangle-fill display-3"></i>
+                </div>
+                <h2 class="fw-bold mb-2" th:text="${errorTitle != null ? errorTitle : 'Something Went Wrong'}">Notice</h2>
+                <div class="badge bg-danger fs-6 mb-3 align-self-center" th:if="${errorCode}" th:text="'Code: ' + ${errorCode}">Code 500</div>
+                <p class="text-muted mb-4" th:text="${errorMessage != null ? errorMessage : 'The requested resource could not be loaded or an unexpected issue occurred.'}">
+                    An error occurred.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a th:href="@{/}" class="btn btn-success px-4"><i class="bi bi-house me-1"></i>Back to Home</a>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary px-4">Go Back</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

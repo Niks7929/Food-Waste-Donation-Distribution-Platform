@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Donor Dashboard')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 p-0">
+                <div th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></div>
+            </div>
+
+            <div class="col-md-9 col-lg-10 p-4">
+                <!-- Approval status banner if pending -->
+                <div th:if="${!organization.isApproved()}" class="alert alert-warning d-flex align-items-center mb-4 rounded-4" role="alert">
+                    <i class="bi bi-clock-history fs-3 me-3"></i>
+                    <div>
+                        <h5 class="fw-bold mb-1">Organization Profile Pending Admin Approval</h5>
+                        <p class="mb-0 small">
+                            Your donor organization (<strong th:text="${organization.organizationName}">Org</strong>) has been submitted for license verification. Food donation publishing will be activated as soon as administrator approval is complete.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1" th:text="${organization.organizationName}">Donor Hub</h2>
+                        <span class="text-muted" th:text="'Managing surplus food from ' + ${organization.organizationType.displayName}">Organization</span>
+                    </div>
+                    <div>
+                        <a th:href="@{/donor/donations/create}" class="btn btn-success fw-bold px-3">
+                            <i class="bi bi-plus-circle me-1"></i>List Food Donation
+                        </a>
+                    </div>
+                </div>
+
+                <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+                <!-- Donor Quick Metric Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="stat-label">Total Donations Published</span>
+                                <span class="badge bg-light text-success border"><i class="bi bi-basket"></i> Listings</span>
+                            </div>
+                            <div class="stat-number text-success" th:text="${totalDonations}">0</div>
+                            <a th:href="@{/donor/donations}" class="small text-muted text-decoration-none">View all listings &rarr;</a>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="stat-label">Pickup Requests Received</span>
+                                <span class="badge bg-light text-primary border"><i class="bi bi-inbox"></i> Inbound</span>
+                            </div>
+                            <div class="stat-number text-primary" th:text="${totalRequests}">0</div>
+                            <a th:href="@{/donor/requests}" class="small text-muted text-decoration-none">Manage requests &rarr;</a>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="stat-label">Account Status</span>
+                                <span class="badge" th:classappend="'badge-status-' + ${organization.approvalStatus}" th:text="${organization.approvalStatus}">STATUS</span>
+                            </div>
+                            <div class="fs-4 fw-bold mt-2" th:text="${organization.approvalStatus == T(com.foodwaste.platform.enums.AccountStatus).APPROVED ? 'Active & Approved' : 'Under Review'}">Status</div>
+                            <span class="small text-muted" th:text="'City: ' + ${organization.city}">City</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two-Column: Active Donations & Recent Incoming Requests -->
+                <div class="row g-4">
+                    <!-- Recent Donations -->
+                    <div class="col-lg-7">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0"><i class="bi bi-collection text-success me-2"></i>Recent Food Listings</h5>
+                                <a th:href="@{/donor/donations}" class="btn btn-sm btn-outline-secondary">View All</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Food Item</th>
+                                                <th>Remaining Qty</th>
+                                                <th>Pickup Deadline</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="d : ${recentDonations}">
+                                                <td>
+                                                    <a th:href="@{'/donor/donations/' + ${d.id}}" class="fw-bold text-decoration-none text-dark" th:text="${d.foodName}">Food Name</a>
+                                                    <div>
+                                                        <span class="badge" th:classappend="${d.foodType.name() == 'VEGETARIAN' ? 'bg-success' : 'bg-danger'}" style="font-size: 0.68rem;" th:text="${d.foodType.displayName}">Type</span>
+                                                        <small class="text-muted" th:text="${d.category.displayName}">Category</small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="fw-bold" th:text="${d.availableQuantity}">0</span>
+                                                    <small class="text-muted" th:text="' / ' + ${d.totalQuantity} + ' ' + ${d.quantityUnit.displayName}"></small>
+                                                </td>
+                                                <td class="small" th:text="${#temporals.format(d.pickupDeadline, 'dd MMM HH:mm')}">Deadline</td>
+                                                <td>
+                                                    <span class="badge" th:classappend="'badge-status-' + ${d.status}" th:text="${d.status}">STATUS</span>
+                                                </td>
+                                            </tr>
+                                            <tr th:if="${#lists.isEmpty(recentDonations)}">
+                                                <td colspan="4" class="text-center py-4 text-muted">
+                                                    You haven't listed any food donations yet.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Requests -->
+                    <div class="col-lg-5">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0"><i class="bi bi-inbox-fill text-primary me-2"></i>Incoming Requests</h5>
+                                <a th:href="@{/donor/requests}" class="btn btn-sm btn-outline-secondary">Manage</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item py-3" th:each="req : ${recentRequests}">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <strong th:text="${req.ngoOrganization.organizationName}">NGO Name</strong>
+                                            <span class="badge" th:classappend="'badge-status-' + ${req.status}" th:text="${req.status}">STATUS</span>
+                                        </div>
+                                        <div class="small text-muted" th:text="'Requested: ' + ${req.requestedQuantity} + ' ' + ${req.quantityUnit.displayName} + ' of ' + ${req.donation.foodName}">Details</div>
+                                        <div class="small text-muted" th:text="'Pickup Est: ' + ${#temporals.format(req.requestedPickupTime, 'dd MMM HH:mm')}">Pickup Est</div>
+                                    </li>
+                                    <li class="list-group-item text-center py-4 text-muted" th:if="${#lists.isEmpty(recentRequests)}">
+                                        No incoming pickup requests at the moment.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

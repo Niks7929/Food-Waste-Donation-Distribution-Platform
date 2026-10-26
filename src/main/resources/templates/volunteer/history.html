@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Delivery History - Volunteer')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 p-0">
+                <div th:replace="~{fragments/sidebar :: sidebar('history')}"></div>
+            </div>
+
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">My Completed Deliveries</h2>
+                        <span class="text-muted">A lasting record of the community service journeys you've fulfilled</span>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Delivery ID</th>
+                                        <th>Food Details</th>
+                                        <th>Origin &rarr; Destination</th>
+                                        <th>Delivered Time</th>
+                                        <th>Confirmation Ref</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="del : ${historyPage.content}">
+                                        <td class="fw-bold" th:text="'#' + ${del.id}">#1</td>
+                                        <td>
+                                            <div class="fw-bold" th:text="${del.pickupRequest.donation.foodName}">Food</div>
+                                            <small class="text-success" th:text="${del.pickupRequest.requestedQuantity} + ' ' + ${del.pickupRequest.quantityUnit.displayName}">Qty</small>
+                                        </td>
+                                        <td class="small">
+                                            <span th:text="${del.pickupRequest.donation.donorOrganization.organizationName}">Donor</span>
+                                            &rarr;
+                                            <span th:text="${del.pickupRequest.ngoOrganization.organizationName}">NGO</span>
+                                        </td>
+                                        <td class="small" th:text="${del.deliveryTime != null ? #temporals.format(del.deliveryTime, 'dd MMM yyyy HH:mm') : 'Pending'}">Time</td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border" th:text="${del.confirmationReference != null ? del.confirmationReference : 'Signed off'}">Ref</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge" th:classappend="'badge-status-' + ${del.deliveryStatus}" th:text="${del.deliveryStatus}">DELIVERED</span>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${historyPage.empty}">
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            You haven't completed any deliveries yet.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

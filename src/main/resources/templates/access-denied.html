@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('403 Access Denied')}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="py-5 text-center">
+        <div class="container py-5">
+            <div class="card border-0 shadow-sm mx-auto p-5 rounded-4" style="max-width: 600px;">
+                <div class="text-warning mb-3">
+                    <i class="bi bi-shield-lock-fill display-3"></i>
+                </div>
+                <h2 class="fw-bold mb-2">Access Denied (403)</h2>
+                <div class="badge bg-warning text-dark fs-6 mb-3 align-self-center">Unauthorized Role / Resource</div>
+                <p class="text-muted mb-4">
+                    You do not have the required role or authorization to view this section. If your account is pending administrator review, please wait until approval is granted.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a th:href="@{/}" class="btn btn-success px-4"><i class="bi bi-house me-1"></i>Return to Home</a>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary px-4">Back</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

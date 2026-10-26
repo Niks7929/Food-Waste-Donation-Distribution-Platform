@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Login - Food Waste Donation Platform')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-7 col-lg-5">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-heart-pulse-fill text-success fs-1"></i>
+                            <h3 class="fw-bold mt-2">Welcome Back</h3>
+                            <p class="text-muted small">Log in to your Food Waste Donation &amp; Distribution account</p>
+                        </div>
+
+                        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+                        <form th:action="@{/login}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                            <div class="mb-3">
+                                <label for="username" class="form-label fw-semibold">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" id="username" name="username" class="form-control border-start-0"
+                                           placeholder="e.g. user@organization.com" required autofocus>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between">
+                                    <label for="password" class="form-label fw-semibold">Password</label>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock"></i></span>
+                                    <input type="password" id="password" name="password" class="form-control border-start-0"
+                                           placeholder="Enter your password" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success w-100 fw-bold py-2 mb-3">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+                            </button>
+
+                            <div class="text-center small text-muted">
+                                Don't have an account? <a th:href="@{/register}" class="text-success fw-semibold">Register here</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Delivery Tasks - Volunteer')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 p-0">
+                <div th:replace="~{fragments/sidebar :: sidebar('tasks')}"></div>
+            </div>
+
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">My Delivery Assignments</h2>
+                        <span class="text-muted">Manage active pickups, in-transit deliveries, and handoff confirmations</span>
+                    </div>
+                </div>
+
+                <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Delivery ID</th>
+                                        <th>Food Details</th>
+                                        <th>Donor Pickup Location</th>
+                                        <th>NGO Drop-off Location</th>
+                                        <th>Current Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="del : ${taskPage.content}">
+                                        <td class="fw-bold" th:text="'#' + ${del.id}">#1</td>
+                                        <td>
+                                            <div class="fw-bold" th:text="${del.pickupRequest.donation.foodName}">Food</div>
+                                            <small class="text-success fw-semibold" th:text="${del.pickupRequest.requestedQuantity} + ' ' + ${del.pickupRequest.quantityUnit.displayName}">Qty</small>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold" th:text="${del.pickupRequest.donation.donorOrganization.organizationName}">Donor Org</div>
+                                            <small class="text-muted" th:text="${del.pickupRequest.donation.pickupAddress}">Address</small>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold" th:text="${del.pickupRequest.ngoOrganization.organizationName}">NGO Org</div>
+                                            <small class="text-muted" th:text="${del.pickupRequest.ngoOrganization.address} + ', ' + ${del.pickupRequest.ngoOrganization.city}">Address</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge" th:classappend="'badge-status-' + ${del.deliveryStatus}" th:text="${del.deliveryStatus}">STATUS</span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{'/volunteer/tasks/' + ${del.id}}" class="btn btn-sm btn-primary">
+                                                Update Progress &rarr;
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${taskPage.empty}">
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            You currently have no assigned delivery tasks.
+                                            <div class="mt-2">
+                                                <a th:href="@{/volunteer/available}" class="btn btn-sm btn-outline-info text-dark">Find Open Tasks to Claim</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3" th:if="${taskPage.totalPages > 1}">
+                        <span class="small text-muted" th:text="'Page ' + (${taskPage.number} + 1) + ' of ' + ${taskPage.totalPages}"></span>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item" th:classappend="${taskPage.first ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/volunteer/tasks(page=${taskPage.number - 1})}">Previous</a>
+                            </li>
+                            <li class="page-item" th:classappend="${taskPage.last ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{/volunteer/tasks(page=${taskPage.number + 1})}">Next</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

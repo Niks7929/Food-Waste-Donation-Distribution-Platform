@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top shadow-sm">
+    <div class="container-fluid px-lg-4">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+            <i class="bi bi-heart-pulse-fill text-success fs-3 me-2"></i>
+            <div>
+                <span class="fs-5 fw-bold text-success">FoodRescue</span>
+                <span class="fs-6 text-muted fw-normal d-none d-sm-inline">Platform</span>
+            </div>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <!-- Public Navigation Links -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}"><i class="bi bi-house-door me-1"></i>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/how-it-works}"><i class="bi bi-diagram-3 me-1"></i>How It Works</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/about}"><i class="bi bi-info-circle me-1"></i>About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/contact}"><i class="bi bi-envelope me-1"></i>Contact</a>
+                </li>
+
+                <!-- Role specific links for quick access when logged in -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link fw-semibold text-primary" th:href="@{/admin/dashboard}">
+                        <i class="bi bi-speedometer2 me-1"></i>Admin Dashboard
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('DONOR')">
+                    <a class="nav-link fw-semibold text-success" th:href="@{/donor/dashboard}">
+                        <i class="bi bi-speedometer2 me-1"></i>Donor Dashboard
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('NGO')">
+                    <a class="nav-link fw-semibold text-warning" th:href="@{/ngo/dashboard}">
+                        <i class="bi bi-speedometer2 me-1"></i>NGO Dashboard
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('VOLUNTEER')">
+                    <a class="nav-link fw-semibold text-info" th:href="@{/volunteer/dashboard}">
+                        <i class="bi bi-speedometer2 me-1"></i>Volunteer Dashboard
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Auth Buttons & User Dropdown -->
+            <div class="d-flex align-items-center gap-2">
+                <!-- If Not Authenticated -->
+                <div sec:authorize="isAnonymous()" class="d-flex gap-2">
+                    <a th:href="@{/login}" class="btn btn-outline-success px-3">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </a>
+                    <a th:href="@{/register}" class="btn btn-success px-3">
+                        <i class="bi bi-person-plus me-1"></i>Join Platform
+                    </a>
+                </div>
+
+                <!-- If Authenticated -->
+                <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-3">
+                    <a th:href="@{/notifications}" class="btn btn-light position-relative rounded-circle p-2" title="Notifications">
+                        <i class="bi bi-bell fs-5"></i>
+                    </a>
+
+                    <div class="dropdown">
+                        <button class="btn btn-light border dropdown-toggle d-flex align-items-center gap-2 py-1 px-3 rounded-pill"
+                                type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5 text-success"></i>
+                            <div class="text-start d-none d-md-block" style="line-height: 1.1;">
+                                <div class="fw-semibold small" sec:authentication="name">User</div>
+                                <span class="badge bg-success" style="font-size: 0.65rem;" sec:authentication="principal.authorities[0].authority">ROLE</span>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenuButton">
+                            <li><h6 class="dropdown-header">Logged in as</h6></li>
+                            <li class="px-3 py-1 small fw-bold text-dark" sec:authentication="name">user@foodwaste.org</li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li sec:authorize="hasRole('ADMIN')">
+                                <a class="dropdown-item" th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                            </li>
+                            <li sec:authorize="hasRole('DONOR')">
+                                <a class="dropdown-item" th:href="@{/donor/dashboard}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                                <a class="dropdown-item" th:href="@{/donor/profile}"><i class="bi bi-building me-2"></i>Organization Profile</a>
+                            </li>
+                            <li sec:authorize="hasRole('NGO')">
+                                <a class="dropdown-item" th:href="@{/ngo/dashboard}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                                <a class="dropdown-item" th:href="@{/ngo/profile}"><i class="bi bi-building me-2"></i>Organization Profile</a>
+                            </li>
+                            <li sec:authorize="hasRole('VOLUNTEER')">
+                                <a class="dropdown-item" th:href="@{/volunteer/dashboard}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                            </li>
+                            <li><a class="dropdown-item" th:href="@{/notifications}"><i class="bi bi-bell me-2"></i>Notifications</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="px-2">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" class="dropdown-item text-danger rounded"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Food Safety Sticky Banner -->
+<div th:fragment="safety-banner" class="food-safety-banner d-flex align-items-center justify-content-center">
+    <i class="bi bi-shield-exclamation fs-6 me-2"></i>
+    <span><strong>FOOD SAFETY NOTICE:</strong> Only safely prepared, properly stored and hygienic food should be donated. Listing food does not automatically certify food safety. Always verify packaging upon receipt.</span>
+</div>
+</body>
+</html>

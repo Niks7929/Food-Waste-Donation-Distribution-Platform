@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Contact & Emergency Helpline')}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="py-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <span class="badge bg-light text-success fw-bold px-3 py-2 rounded-pill mb-2">Get in Touch</span>
+                    <h1 class="fw-bold mb-3">We're Here to Help Rescue More Meals</h1>
+                    <p class="text-muted mb-4">
+                        Have queries about onboarding your restaurant or NGO? Want to coordinate large banquet food rescue? Reach out to our 24/7 coordination team.
+                    </p>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box icon-box-primary me-3"><i class="bi bi-telephone-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Emergency Food Rescue Helpline</h6>
+                            <span class="text-muted">+91 (020) 2567-8900 / +91 98765 43210</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box icon-box-primary me-3"><i class="bi bi-envelope-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Official Email Support</h6>
+                            <span class="text-muted">helpdesk@foodwaste.org</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box icon-box-primary me-3"><i class="bi bi-geo-alt-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Central Operations Hub</h6>
+                            <span class="text-muted">Floor 4, Zero Waste Center, Senapati Bapat Road, Pune, Maharashtra 411016</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h4 class="fw-bold mb-0">Send Us a Direct Message</h4>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="bi bi-shield-check me-1"></i>Direct to Admin</span>
+                        </div>
+                        <p class="text-muted small mb-3">Have questions, need help with registrations, or want to partner with us? Leave a message below and our Central Administration will assist you.</p>
+
+                        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+                        <form th:action="@{/contact}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label fw-semibold">Your Full Name</label>
+                                <input type="text" id="fullName" name="fullName" class="form-control" placeholder="e.g. Rahul Patil" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-semibold">Email Address</label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="e.g. rahul@example.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="roleOrOrg" class="form-label fw-semibold">Organization / Role</label>
+                                <input type="text" id="roleOrOrg" name="roleOrOrg" class="form-control" placeholder="e.g. Restaurant Owner / Volunteer">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label fw-semibold">Message</label>
+                                <textarea id="message" name="message" class="form-control" rows="4" placeholder="How can we assist you today?" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100 fw-bold py-2">
+                                <i class="bi bi-send-fill me-1"></i>Submit Message to Admin
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

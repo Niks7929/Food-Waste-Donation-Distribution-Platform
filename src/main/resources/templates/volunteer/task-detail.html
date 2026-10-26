@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Delivery Task Fulfillment - Volunteer')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 p-0">
+                <div th:replace="~{fragments/sidebar :: sidebar('tasks')}"></div>
+            </div>
+
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1" th:text="'Delivery Task #' + ${delivery.id}">Delivery Task</h2>
+                        <span class="text-muted" th:text="${delivery.pickupRequest.donation.foodName}">Food Name</span>
+                    </div>
+                    <a th:href="@{/volunteer/tasks}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Back to My Tasks
+                    </a>
+                </div>
+
+                <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+                <!-- Progress Tracker Bar -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                    <h6 class="fw-bold text-muted text-uppercase mb-3 small" style="letter-spacing: 0.5px;">Delivery Lifecycle Progress</h6>
+                    <div class="d-flex justify-content-between text-center position-relative">
+                        <div class="flex-fill">
+                            <div class="badge rounded-circle p-2 mb-1" th:classappend="${delivery.deliveryStatus.name() == 'ASSIGNED' || delivery.deliveryStatus.name() == 'PICKED_UP' || delivery.deliveryStatus.name() == 'IN_TRANSIT' || delivery.deliveryStatus.name() == 'DELIVERED' ? 'bg-primary' : 'bg-light text-muted border'}">
+                                <i class="bi bi-person-check fs-5"></i>
+                            </div>
+                            <div class="small fw-bold">1. Assigned</div>
+                        </div>
+
+                        <div class="flex-fill">
+                            <div class="badge rounded-circle p-2 mb-1" th:classappend="${delivery.deliveryStatus.name() == 'PICKED_UP' || delivery.deliveryStatus.name() == 'IN_TRANSIT' || delivery.deliveryStatus.name() == 'DELIVERED' ? 'bg-primary' : 'bg-light text-muted border'}">
+                                <i class="bi bi-box-seam fs-5"></i>
+                            </div>
+                            <div class="small fw-bold">2. Picked Up</div>
+                            <div class="small text-muted" th:if="${delivery.pickupTime != null}" th:text="${#temporals.format(delivery.pickupTime, 'HH:mm')}">Time</div>
+                        </div>
+
+                        <div class="flex-fill">
+                            <div class="badge rounded-circle p-2 mb-1" th:classappend="${delivery.deliveryStatus.name() == 'IN_TRANSIT' || delivery.deliveryStatus.name() == 'DELIVERED' ? 'bg-primary' : 'bg-light text-muted border'}">
+                                <i class="bi bi-bicycle fs-5"></i>
+                            </div>
+                            <div class="small fw-bold">3. In Transit</div>
+                        </div>
+
+                        <div class="flex-fill">
+                            <div class="badge rounded-circle p-2 mb-1" th:classappend="${delivery.deliveryStatus.name() == 'DELIVERED' ? 'bg-success' : 'bg-light text-muted border'}">
+                                <i class="bi bi-check2-circle fs-5"></i>
+                            </div>
+                            <div class="small fw-bold">4. Delivered</div>
+                            <div class="small text-muted" th:if="${delivery.deliveryTime != null}" th:text="${#temporals.format(delivery.deliveryTime, 'HH:mm')}">Time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Pickup and Delivery Route Details -->
+                    <div class="col-lg-7">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Route Coordinates</h5>
+
+                            <!-- Pickup Section -->
+                            <div class="p-3 bg-light rounded-3 mb-3 border-start border-4 border-success">
+                                <span class="badge bg-success mb-1">STEP 1: PICKUP ORIGIN</span>
+                                <h6 class="fw-bold mb-1" th:text="${delivery.pickupRequest.donation.donorOrganization.organizationName}">Donor Org</h6>
+                                <div class="text-muted small mb-2" th:text="${delivery.pickupRequest.donation.pickupAddress}">Address</div>
+                                <div class="small">
+                                    <i class="bi bi-telephone text-success me-1"></i>Contact:
+                                    <span th:text="${delivery.pickupRequest.donation.donorOrganization.user.fullName} + ' (' + ${delivery.pickupRequest.donation.donorOrganization.user.phone} + ')'">Phone</span>
+                                </div>
+                            </div>
+
+                            <!-- Dropoff Section -->
+                            <div class="p-3 bg-light rounded-3 mb-3 border-start border-4 border-primary">
+                                <span class="badge bg-primary mb-1">STEP 2: DROPOFF DESTINATION</span>
+                                <h6 class="fw-bold mb-1" th:text="${delivery.pickupRequest.ngoOrganization.organizationName}">NGO Org</h6>
+                                <div class="text-muted small mb-2" th:text="${delivery.pickupRequest.ngoOrganization.address} + ', ' + ${delivery.pickupRequest.ngoOrganization.city}">Address</div>
+                                <div class="small">
+                                    <i class="bi bi-telephone text-primary me-1"></i>Recipient Contact:
+                                    <span th:text="${delivery.pickupRequest.ngoOrganization.user.fullName} + ' (' + ${delivery.pickupRequest.ngoOrganization.user.phone} + ')'">Phone</span>
+                                </div>
+                            </div>
+
+                            <!-- Food Package Specs -->
+                            <h6 class="fw-bold mb-2">Food Handling Specifications</h6>
+                            <div class="row g-2 small text-muted">
+                                <div class="col-6">Quantity: <strong class="text-dark" th:text="${delivery.pickupRequest.requestedQuantity} + ' ' + ${delivery.pickupRequest.quantityUnit.displayName}">Qty</strong></div>
+                                <div class="col-6">Food Type: <strong class="text-dark" th:text="${delivery.pickupRequest.donation.foodType.displayName}">Type</strong></div>
+                                <div class="col-12" th:if="${delivery.pickupRequest.donation.storageInstructions}">
+                                    Storage: <strong class="text-dark" th:text="${delivery.pickupRequest.donation.storageInstructions}">Instructions</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Status Action Panel -->
+                    <div class="col-lg-5">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-check2-square text-success me-2"></i>Update Courier Status</h5>
+
+                            <div th:if="${delivery.deliveryStatus.name() == 'DELIVERED'}" class="alert alert-success">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                <strong>Delivery Completed!</strong> This meal handover has been finalized and recorded in distribution audit logs.
+                            </div>
+
+                            <form th:if="${delivery.deliveryStatus.name() != 'DELIVERED' && delivery.deliveryStatus.name() != 'FAILED'}"
+                                  th:action="@{'/volunteer/tasks/' + ${delivery.id} + '/status'}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Next Milestone Status <span class="text-danger">*</span></label>
+                                    <select name="newStatus" class="form-select form-select-lg" required>
+                                        <option th:if="${delivery.deliveryStatus.name() == 'ASSIGNED'}" value="PICKED_UP">Mark as PICKED UP from Donor</option>
+                                        <option th:if="${delivery.deliveryStatus.name() == 'PICKED_UP'}" value="IN_TRANSIT">Mark as IN TRANSIT to NGO</option>
+                                        <option th:if="${delivery.deliveryStatus.name() == 'PICKED_UP' || delivery.deliveryStatus.name() == 'IN_TRANSIT'}" value="DELIVERED">Mark as DELIVERED to NGO</option>
+                                        <option value="FAILED">Report Delivery Failed / Unreachable</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Delivery Confirmation Reference / Signoff</label>
+                                    <input type="text" name="confirmationReference" class="form-control"
+                                           placeholder="e.g. Received by Care Coordinator Sunita" th:value="${delivery.confirmationReference}">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Courier Notes</label>
+                                    <textarea name="notes" class="form-control" rows="2"
+                                              placeholder="Any notes about condition, temperature, or packaging..." th:text="${delivery.deliveryNotes}"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-success btn-lg w-100 fw-bold py-2">
+                                    <i class="bi bi-check-circle me-1"></i>Save Status Update
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

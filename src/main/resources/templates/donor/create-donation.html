@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Create Food Donation - Donor')}"></head>
+<body class="bg-light">
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 p-0">
+                <div th:replace="~{fragments/sidebar :: sidebar('create-donation')}"></div>
+            </div>
+
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">Publish Food Donation</h2>
+                        <span class="text-muted">Fill out the details for surplus food batch collection</span>
+                    </div>
+                    <a th:href="@{/donor/donations}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Listings
+                    </a>
+                </div>
+
+                <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+                <!-- Food Safety Assurance Banner -->
+                <div class="card border-success bg-white mb-4 rounded-4 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-shield-check text-success fs-2 me-3"></i>
+                            <div>
+                                <h5 class="fw-bold text-success mb-1">Donor Food Safety Checklist</h5>
+                                <p class="small text-muted mb-0">
+                                    Ensure food has been maintained within safe temperature thresholds (hot above 60&deg;C or chilled below 5&deg;C). Package in clean, food-grade containers and specify realistic pickup deadlines so recipient kitchens have adequate time to distribute safely.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Donation Form Card -->
+                <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5">
+                    <form th:action="@{/donor/donations/create}" th:object="${donation}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                        <!-- Basic Food Info -->
+                        <h5 class="fw-bold border-bottom pb-2 mb-3 text-secondary">1. Food Information</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold">Food Title / Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{foodName}"
+                                       placeholder="e.g. Fresh Steamed Rice & Dal Makhani" required>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('foodName')}" th:errors="*{foodName}"></div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Food Category <span class="text-danger">*</span></label>
+                                <select class="form-select" th:field="*{category}" required>
+                                    <option value="">-- Select Category --</option>
+                                    <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.displayName}"></option>
+                                </select>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Dietary Classification <span class="text-danger">*</span></label>
+                                <select class="form-select" th:field="*{foodType}" required>
+                                    <option value="">-- Dietary Type --</option>
+                                    <option th:each="ft : ${foodTypes}" th:value="${ft}" th:text="${ft.displayName}"></option>
+                                </select>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('foodType')}" th:errors="*{foodType}"></div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Total Quantity <span class="text-danger">*</span></label>
+                                <input type="number" step="0.1" min="0.1" class="form-control" th:field="*{totalQuantity}"
+                                       placeholder="e.g. 50" required>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('totalQuantity')}" th:errors="*{totalQuantity}"></div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Quantity Unit <span class="text-danger">*</span></label>
+                                <select class="form-select" th:field="*{quantityUnit}" required>
+                                    <option value="">-- Unit --</option>
+                                    <option th:each="u : ${units}" th:value="${u}" th:text="${u.displayName}"></option>
+                                </select>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('quantityUnit')}" th:errors="*{quantityUnit}"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea class="form-control" rows="2" th:field="*{description}"
+                                          placeholder="Describe packaging, items included, or condition (e.g. packed in 50 single-serve foil boxes)"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Schedule & Location -->
+                        <h5 class="fw-bold border-bottom pb-2 mb-3 text-secondary">2. Timestamps &amp; Pickup Location</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Preparation Date &amp; Time <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" th:field="*{preparedAt}" required>
+                                <small class="text-muted">When was this food cooked or prepared?</small>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('preparedAt')}" th:errors="*{preparedAt}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Pickup Deadline <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" th:field="*{pickupDeadline}" required>
+                                <small class="text-muted">Latest time for safe pickup before automatic expiration</small>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('pickupDeadline')}" th:errors="*{pickupDeadline}"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Pickup Address <span class="text-danger">*</span></label>
+                                <textarea class="form-control" rows="2" th:field="*{pickupAddress}"
+                                          placeholder="Precise pickup location with landmarks" required></textarea>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('pickupAddress')}" th:errors="*{pickupAddress}"></div>
+                            </div>
+                        </div>
+
+                        <!-- Storage, Allergens & Media -->
+                        <h5 class="fw-bold border-bottom pb-2 mb-3 text-secondary">3. Safety Details &amp; Packaging Image</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Storage Instructions</label>
+                                <input type="text" class="form-control" th:field="*{storageInstructions}"
+                                       placeholder="e.g. Keep refrigerated below 5&deg;C / Keep insulated">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Allergen Information (if known)</label>
+                                <input type="text" class="form-control" th:field="*{allergenInformation}"
+                                       placeholder="e.g. Contains dairy, gluten, nuts, or soy">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Food / Packaging Photo (Optional)</label>
+                                <input type="file" class="form-control" th:field="*{imageFile}" accept="image/jpeg,image/png,image/webp">
+                                <small class="text-muted">Max file size 5MB (JPG, PNG, or WebP format)</small>
+                            </div>
+                        </div>
+
+                        <!-- Compliance declaration -->
+                        <div class="form-check mb-4 p-3 bg-light rounded border">
+                            <input class="form-check-input ms-0 me-2" type="checkbox" id="safetyCertCheck" required>
+                            <label class="form-check-label fw-semibold small text-dark" for="safetyCertCheck">
+                                I confirm that this surplus food is fit for human consumption, stored under hygienic conditions, and packaged safely according to standard food handling practices.
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg fw-bold px-4">
+                            <i class="bi bi-cloud-arrow-up me-2"></i>Publish Food Listing
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

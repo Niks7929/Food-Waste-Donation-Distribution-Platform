@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('How It Works - Step by Step Flow')}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: safety-banner}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="badge bg-light text-success fw-bold px-3 py-2 rounded-pill mb-2">Step-by-Step Architecture</span>
+                <h1 class="fw-bold">How the Food Rescue Process Works</h1>
+                <p class="text-muted">Explore how each stakeholder interacts with the system from publication to final distribution.</p>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <!-- Donor Flow -->
+                <div class="col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm p-4 rounded-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-success p-2 rounded-circle me-2"><i class="bi bi-shop fs-5"></i></span>
+                            <h4 class="fw-bold mb-0">1. Donor Workflow</h4>
+                        </div>
+                        <ol class="list-group list-group-numbered list-group-flush border-0">
+                            <li class="list-group-item border-0 px-0"><strong>Account Verification:</strong> Donor registers and admin verifies commercial organization license.</li>
+                            <li class="list-group-item border-0 px-0"><strong>Create Food Listing:</strong> Enter food name, category, veg/non-veg status, quantity (meals, kg, packets), preparation time, allergen notes, and pickup deadline.</li>
+                            <li class="list-group-item border-0 px-0"><strong>Review Inbound Requests:</strong> Receive instant notification when an NGO requests a batch; review and approve or reject.</li>
+                            <li class="list-group-item border-0 px-0"><strong>Handover to Courier:</strong> Handoff packed meals to assigned volunteer courier upon identity verification.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- NGO Flow -->
+                <div class="col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm p-4 rounded-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-warning text-dark p-2 rounded-circle me-2"><i class="bi bi-heart fs-5"></i></span>
+                            <h4 class="fw-bold mb-0">2. NGO Workflow</h4>
+                        </div>
+                        <ol class="list-group list-group-numbered list-group-flush border-0">
+                            <li class="list-group-item border-0 px-0"><strong>Browse Live Directory:</strong> Filter active listings by location, food type (veg/non-veg), category, and available quantities.</li>
+                            <li class="list-group-item border-0 px-0"><strong>Atomic Quantity Reservation:</strong> Submit request for specific quantity needed. The platform atomically reserves the quantity to prevent double-booking.</li>
+                            <li class="list-group-item border-0 px-0"><strong>Approval Notification:</strong> Receive confirmation once donor approves the request.</li>
+                            <li class="list-group-item border-0 px-0"><strong>Receipt &amp; Distribution:</strong> Receive delivery from volunteer courier, verify hygiene, and distribute to beneficiaries.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Volunteer Flow -->
+                <div class="col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm p-4 rounded-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-info text-dark p-2 rounded-circle me-2"><i class="bi bi-bicycle fs-5"></i></span>
+                            <h4 class="fw-bold mb-0">3. Volunteer Workflow</h4>
+                        </div>
+                        <ol class="list-group list-group-numbered list-group-flush border-0">
+                            <li class="list-group-item border-0 px-0"><strong>Task Assignment or Claim:</strong> View approved deliveries assigned by admin or claim open pickup tasks nearby.</li>
+                            <li class="list-group-item border-0 px-0"><strong>Pickup from Donor:</strong> Navigate to donor address, collect food packets, and mark status as <code>PICKED_UP</code>.</li>
+                            <li class="list-group-item border-0 px-0"><strong>Transit Tracking:</strong> Update status to <code>IN_TRANSIT</code> while commuting to the NGO facility.</li>
+                            <li class="list-group-item border-0 px-0"><strong>Handoff Confirmation:</strong> Deliver to NGO representative, mark <code>DELIVERED</code>, and record confirmation notes.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- State Machine Overview -->
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-light">
+                <h4 class="fw-bold mb-3"><i class="bi bi-gear-wide-connected me-2 text-success"></i>Automated Lifecycle &amp; State Machine</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered bg-white">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Entity</th>
+                                <th>Possible Statuses</th>
+                                <th>Trigger / Business Rule</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Food Donation</strong></td>
+                                <td><code>AVAILABLE</code>, <code>PARTIALLY_RESERVED</code>, <code>RESERVED</code>, <code>COLLECTED</code>, <code>DELIVERED</code>, <code>EXPIRED</code>, <code>CANCELLED</code></td>
+                                <td>Changes status based on available vs reserved quantity; automatically marked <code>EXPIRED</code> by background scheduler when past deadline.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pickup Request</strong></td>
+                                <td><code>PENDING</code>, <code>APPROVED</code>, <code>REJECTED</code>, <code>CANCELLED</code>, <code>ASSIGNED</code>, <code>PICKED_UP</code>, <code>IN_TRANSIT</code>, <code>COMPLETED</code></td>
+                                <td>Created by NGO; approved by Donor; completed when courier finishes physical handover.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Delivery Task</strong></td>
+                                <td><code>ASSIGNED</code>, <code>PICKED_UP</code>, <code>IN_TRANSIT</code>, <code>DELIVERED</code>, <code>FAILED</code></td>
+                                <td>Volunteers log milestone timestamps; status transitions are checked and restricted to authorized assignees.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
